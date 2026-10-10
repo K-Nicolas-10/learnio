@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ro" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flashcarduri · Hattie, Cap. 9</title>
+<style>
+:root{
+  --bg:#f3f6f9;--surface:#ffffff;--ink:#16222e;--mut:#64748b;--line:#e2e8f0;
+  --acc:#2a7f8e;--acc-soft:#e3f2f4;--navy:#1f3a5f;--ok:#1f9d6a;--ok-soft:#e1f5ec;--no:#d6534d;--no-soft:#fbe9e8;
+  --shadow:0 10px 30px rgba(31,58,95,.12);--r:18px;
+}
+@media(prefers-color-scheme:dark){:root[data-theme=auto]{
+  --bg:#0f151b;--surface:#1a232d;--ink:#e8eef4;--mut:#93a4b5;--line:#2a3643;
+  --acc:#52b8c8;--acc-soft:#1a3139;--navy:#9bbbe8;--ok:#43c28f;--ok-soft:#173226;--no:#ef7a74;--no-soft:#3a1f1e;--shadow:0 10px 30px rgba(0,0,0,.45)}}
+:root[data-theme=dark]{
+  --bg:#0f151b;--surface:#1a232d;--ink:#e8eef4;--mut:#93a4b5;--line:#2a3643;
+  --acc:#52b8c8;--acc-soft:#1a3139;--navy:#9bbbe8;--ok:#43c28f;--ok-soft:#173226;--no:#ef7a74;--no-soft:#3a1f1e;--shadow:0 10px 30px rgba(0,0,0,.45)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:1.1rem;margin:0;color:var(--navy);line-height:1.25}
+h1 small{display:block;font-weight:500;color:var(--mut);font-size:.8rem}
+.icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;font-size:1.05rem;display:grid;place-items:center}
+.icon:hover{border-color:var(--acc)}
+.hdr-btns{display:flex;gap:8px}
+
+/* progress */
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.prog-top{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mut);margin-bottom:8px}
+.prog-top b{color:var(--ink)}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;display:flex}
+.bar i{display:block;height:100%;transition:width .35s}
+.bar .k{background:var(--ok)}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:thin}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 13px;font-size:.85rem;cursor:pointer;display:flex;gap:7px;align-items:center;white-space:nowrap}
+.chip em{font-style:normal;font-size:.72rem;color:var(--mut);background:var(--bg);border-radius:99px;padding:1px 7px}
+.chip:hover{border-color:var(--acc)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip.on em{background:rgba(255,255,255,.22);color:#fff}
+
+.tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;color:var(--mut);padding:7px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.seg button.on{background:var(--acc-soft);color:var(--acc);font-weight:600}
+.link{background:none;border:0;color:var(--acc);font:inherit;font-size:.85rem;cursor:pointer;padding:6px 4px}
+.link:hover{text-decoration:underline}
+
+/* card */
+.stage{perspective:1400px;position:relative}
+.card{position:relative;width:100%;height:clamp(300px,52vh,400px);transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1);cursor:pointer;outline:none}
+.card.flip{transform:rotateY(180deg)}
+.card.swipe-l{animation:outl .25s forwards}.card.swipe-r{animation:outr .25s forwards}
+@keyframes outl{to{opacity:0;transform:translateX(-60px)}}@keyframes outr{to{opacity:0;transform:translateX(60px)}}
+.card.enter{animation:enter .3s}
+@keyframes enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;padding:22px 26px;overflow:hidden}
+.face::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--acc)}
+.back{transform:rotateY(180deg)}.back::before{background:var(--navy)}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--acc)}
+.back .top{color:var(--navy)}
+.badge{padding:2px 9px;border-radius:99px;font-size:.68rem;letter-spacing:.04em}
+.badge.k{background:var(--ok-soft);color:var(--ok)}
+.body{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:10px 0}
+.q{font-size:clamp(1.15rem,3.4vw,1.5rem);font-weight:600;text-align:center;line-height:1.4}
+.a{font-size:clamp(1rem,2.8vw,1.15rem);line-height:1.6;max-width:60ch}
+.hint{text-align:center;font-size:.78rem;color:var(--mut)}
+.hint kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;font:inherit;font-size:.72rem;background:var(--bg)}
+
+/* controls */
+.row{display:flex;gap:10px;margin-top:16px;align-items:center;justify-content:center}
+.nav{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.15rem;cursor:pointer}
+.nav:hover{border-color:var(--acc);color:var(--acc)}
+.cnt{min-width:90px;text-align:center;color:var(--mut);font-size:.9rem}
+.big{flex:1;max-width:260px;border:2px solid;border-radius:14px;padding:13px 10px;font:inherit;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .1s}
+.big:active{transform:scale(.97)}
+.big small{font-weight:400;font-size:.72rem;opacity:.8}
+.big.no{background:var(--no-soft);border-color:var(--no);color:var(--no)}
+.big.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.grade{display:flex;gap:10px;margin-top:16px;justify-content:center;transition:opacity .2s}
+.grade.dis{opacity:.4;pointer-events:none}
+.tip{margin-top:6px;text-align:center;font-size:.78rem;color:var(--mut)}
+
+/* done */
+.done{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:44px 24px}
+.done h2{margin:0 0 6px;color:var(--navy)}.done p{color:var(--mut);margin:0 0 20px}
+.btn{border:0;background:var(--acc);color:#fff;border-radius:12px;padding:12px 20px;font:inherit;font-weight:600;cursor:pointer;margin:4px}
+.btn.alt{background:var(--acc-soft);color:var(--acc)}
+
+/* help */
+dialog{border:0;border-radius:18px;padding:24px;max-width:420px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(10,18,26,.55)}
+dialog h3{margin:0 0 10px;color:var(--navy)}dialog li{margin:6px 0}
+dialog kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;font-size:.85em;background:var(--bg)}
+@media(max-width:520px){.face{padding:18px}.big small{display:none}.hint .kb{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body><div class="wrap">
+<header>
+  <h1>Flashcarduri<small>Hattie, Învățarea vizibilă · Cap. 9: Profesorul</small></h1>
+  <div class="hdr-btns"><button class="icon" id="theme" title="Temă luminoasă/întunecată" aria-label="Schimbă tema">◐</button><button class="icon" id="help" title="Cum se folosește" aria-label="Ajutor">?</button></div>
+</header>
+
+<div class="prog"><div class="prog-top"><span><b id="pk">0</b> știute din <b id="pt">0</b></span><span id="pp">0%</span></div><div class="bar"><i class="k" id="pbar" style="width:0"></i></div></div>
+
+<div class="chips" id="chips" role="tablist" aria-label="Categorii"></div>
+
+<div class="tools">
+  <div class="seg" id="mode"><button data-m="all" class="on">Toate</button><button data-m="todo">De repetat</button></div>
+  <div><button class="link" id="shuf">⇄ Amestecă</button><button class="link" id="reset">Resetează</button></div>
+</div>
+
+<main id="main"></main>
+</div>
+
+<dialog id="dlg"><h3>Cum se folosește</h3><ol>
+<li>Citește întrebarea și încearcă să răspunzi în minte.</li>
+<li>Întoarce cardul: click, <kbd>Spațiu</kbd> sau <kbd>↑</kbd>.</li>
+<li>Marchează <b>Știu</b> (<kbd>→</kbd>) sau <b>De repetat</b> (<kbd>←</kbd>).</li>
+<li>Pe telefon: trage cardul stânga/dreapta.</li>
+<li>Din „De repetat” vezi doar ce nu ai reținut încă.</li></ol>
+<p style="color:var(--mut);font-size:.85rem">Progresul se salvează automat în browser.</p>
+<button class="btn" onclick="document.getElementById('dlg').close()">Am înțeles</button></dialog>
+
+<script>
+const ALL=[{"c": "Context", "q": "Câți profesori sunt în lume și de câți e nevoie în următorii 10 ani (UNESCO)?", "a": "Aprox. 80 de milioane de profesori; UNESCO estimează nevoia a încă 69 de milioane."}, {"c": "Context", "q": "Care sunt cele 10 tendințe ale profesiei (Ingersoll)?", "a": "Mai mare, mai ieftin, mai tânăr, feminin, divers, „OK” academic, probabilitate mai mică de a rămâne, pregătit online, dornic și nerăbdător, prost plătit."}, {"c": "Context", "q": "Ce este „economia gig” în educație?", "a": "Sistem de piață liberă cu aranjamente pe termen scurt (suplinitori, contracte temporare); profesoratul ca slujbă temporară, nu carieră pe toată viața."}, {"c": "Context", "q": "Care sunt principalele motive pentru care profesorii pleacă din școli (Gundlach, 2022)?", "a": "Conflictele cu conducerea și salariul (0,47); lipsa autonomiei. Elevii sunt motiv mult mai rar (standarde academice −0,13, comportament 0,05)."}, {"c": "Context", "q": "De ce motive aleg oamenii să devină profesori (Richardson și Watt)?", "a": "Valoarea intrinsecă, capacitatea percepută de a preda, dorința de a contribui social, munca cu copiii/adolescenții, experiențe pozitive anterioare."}, {"c": "Context", "q": "Care este problema cu mentoratul pentru profesorii începători?", "a": "Peste 90% din directorii australieni pretind că au program excelent de mentorat, dar sub 40% dintre profesori îl cunosc."}, {"c": "Efectele profesorului", "q": "Cât din varianța rezultatelor se explică prin profesor (estimări)?", "a": "13% la citire, 17% la matematică (Hanushek și Rivkin); 3–16% în alte studii; doar 2–3% în studiul pe gemeni (Grasby et al.)."}, {"c": "Efectele profesorului", "q": "Ce diferență face un profesor de la percentila 75 față de unul de la 25?", "a": "Aprox. 0,2 abateri standard de progres într-un an."}, {"c": "Efectele profesorului", "q": "Care este efectul mediu (d) al domeniului „Profesorul” și al celor două părți?", "a": "Total d = 0,47. Atribute d = 0,59; formare profesională d = 0,36."}, {"c": "Atribute", "q": "Care sunt cele mai puternice atribute ale profesorului (d)?", "a": "Eficacitatea colectivă 1,34; estimările de performanță 1,30; credibilitatea 1,09; claritatea 0,85; neetichetarea 0,61; așteptările 0,58."}, {"c": "Atribute", "q": "Ce corelație are personalitatea profesorului cu performanța elevilor?", "a": "Foarte mică (r mediu = 0,05). Cele mai relevante: eficiența personală (0,21), entuziasmul (0,16), judecata-percepția (0,16), expresivitatea (0,14)."}, {"c": "Atribute", "q": "Ce este abilitatea verbală a profesorului și cât contează (d = 0,22)?", "a": "Legată de rezultate mai ales în primii ani de predare; apoi efectul scade, pe măsură ce alți factori devin mai importanți (Aloe și Becker)."}, {"c": "Atribute", "q": "Cum se schimbă eficiența profesorilor cu experiența?", "a": "Crește, dar puțin și neliniar: salt în primii 3–5 ani, apoi platou. Concluzie: școlile să crească eficiența <b>tuturor</b> profesorilor, indiferent de vechime."}, {"c": "Atribute", "q": "Ce spun metaanalizele despre așteptările profesorilor (d = 0,58)?", "a": "Așteptările pot modifica performanța elevilor. Întrebarea: au așteptări false care duc la scăderi, sau ridicate pentru toți?"}, {"c": "Atribute", "q": "Cum diferă profesorii cu așteptări ridicate de cei cu așteptări scăzute (Rubie-Davies)?", "a": "Ridicate (d 0,50–1,44): agenți ai schimbării, abilități flexibile, grupuri pe interese, sarcini avansate pentru toți, feedback. Scăzute (d −0,03–0,20): facilitatori, abilități fixe, grupuri rigide, sarcini repetitive pentru cei slabi."}, {"c": "Atribute", "q": "Ce a arătat Weinstein despre așteptări?", "a": "Elevii știu că sunt tratați diferit; așteptările fac parte din țesătura instituțiilor (separare, grupare), nu doar „din mintea profesorilor”."}, {"c": "Atribute", "q": "Ce recomandă Hattie pentru a evita efectele așteptărilor scăzute?", "a": "Accentuați progresul individual (nu comparația cu alții), căutați dovezi care infirmă așteptările scăzute, „fiți pregătiți să fiți surprinși”, „nu presupuneți”."}, {"c": "Atribute", "q": "Cum influențează atractivitatea fizică așteptările profesorilor (d = 0,36)?", "a": "Profesorii îi evaluează mai favorabil (inteligență, potențial, note) pe elevii atrăgători, din prejudecata că aspectul e legat de abilități sociale și comportament."}, {"c": "Atribute", "q": "De ce e problematică etichetarea elevilor (d = 0,61 pentru neetichetare)?", "a": "Eticheta duce la așteptări scăzute: elevii neetichetați cu performanță slabă depășesc elevii etichetați (Fuchs et al., d = −0,61)."}, {"c": "Atribute", "q": "Care e rolul corect al unui diagnostic?", "a": "Primul pas spre o intervenție adecvată, niciodată ultimul; nu trebuie să devină sinonim pentru vinovăția copilului, nevoi speciale sau statut socioeconomic precar."}, {"c": "Atribute", "q": "Ce abordare alternativă la etichete menționează capitolul?", "a": "Intervenții bazate pe dovezi (RTI, MTSS), instrucție optimă pentru toți; Singapore preferă „elevi lenți”; Italia – același curriculum pentru toți."}, {"c": "Atribute", "q": "Cât de exacte sunt estimările profesorilor despre performanță (d = 1,30)?", "a": "Foarte bune față de performanța reală (r = 0,63–0,66), mai slabe la creativitate (0,23); inteligență r = 0,54."}, {"c": "Atribute", "q": "Ce limite au estimările profesorilor?", "a": "Circa două treimi din varianță nu e explicată de performanță: efect de halou, susținerea familiei, abilități sociale, comportament, sex. Trebuie triangulate, nu folosite singure."}, {"c": "Atribute", "q": "Ce întrebare trebuie să-și pună profesorul când evaluează un elev?", "a": "„Cât de bun este acest elev <b>la acest lucru</b>?” (nu o judecată generală); păstrează incertitudinea și caută informații."}, {"c": "Atribute", "q": "Ce este credibilitatea profesorului (d = 1,09)?", "a": "Credința elevilor că pot învăța de la el pentru că este credibil, elocvent și capabil să le asigure succesul; fără ea, elevii nu mai sunt receptivi (Finn et al.)."}, {"c": "Atribute", "q": "Ce sunt cei 5 factori ai clarității (Bolkan, 2017)?", "a": "Lipsa de fluență, supraîncărcarea, interacțiunea, coerența și structura."}, {"c": "Atribute", "q": "Cât de importantă e claritatea (d = 0,85)?", "a": "Corelație r = 0,35 (d = 0,67) cu performanța; mai mare la liceu/facultate și când e evaluată de elevi. Înseamnă „precizie-în-practică”: criterii de succes, aliniere lecție–sarcini–temă, exemple, feedback."}, {"c": "Atribute", "q": "Ce este eficacitatea colectivă (d = 1,34)?", "a": "Credința unui grup (Bandura) că prin efort comun poate depăși dificultăți; se bazează pe dovezi despre impact și pe un limbaj comun („Suntem evaluatori”, „Suntem agenți de schimbare”)."}, {"c": "Atribute", "q": "De ce e greu de creat eficacitatea colectivă?", "a": "Colaborarea e adesea artificială („colegialitate inventată”); rar există cercetare colaborativă despre predare. Conducerea școlii poate crea conversații despre impact și așteptări pentru colaborare."}, {"c": "Formare", "q": "Care sunt efectele (d) ale intervențiilor de formare?", "a": "Micropredare/video 1,01; dezvoltare profesională 0,44; calificări 0,39; coaching 0,26; cunoașterea materiei 0,13; programe inițiale 0,10."}, {"c": "Formare", "q": "Când învață profesorii cel mai mult despre predare?", "a": "50% din ce ajung să știe în primul an la catedră, încă jumătate în al doilea; apoi progresul e relativ plat."}, {"c": "Formare", "q": "Ce spune capitolul despre programele inițiale de pregătire (d = 0,10)?", "a": "Efect aproape neglijabil, nu există abordare standard („Dodge City”), dovezi puține. Contează mai mult experiența didactică decât durata sau tipul diplomei."}, {"c": "Formare", "q": "Ce este modelul clinic de formare (Melbourne)?", "a": "Candidații prezintă diagnosticul, intervenția și evaluarea impactului pentru nevoile elevilor; echilibrează dovezile externe cu expertiza clinică; dezvoltă gândirea evaluativă."}, {"c": "Formare", "q": "Care sunt cele 7 caracteristici ale programelor-model (Darling-Hammond)?", "a": "Coerență pe viziune comună, standarde clare, curriculum bazat pe dezvoltarea copilului, experiență clinică extinsă, strategii de confruntare a credințelor, relații puternice între parteneri, evaluare bazată pe standarde profesionale."}, {"c": "Formare", "q": "Ce se știe despre calificările și selecția viitorilor profesori?", "a": "Doar nivelul de formare a educatorilor se leagă slab de calitate (d = 0,39); predictorii academici (r = 0,13) și non-academici (0,10) ai selecției prezic slab eficacitatea."}, {"c": "Formare", "q": "Cum se evaluează de obicei dezvoltarea profesională și ce nu e bine?", "a": "Prea des după satisfacția profesorilor; trebuie evaluată după schimbarea practicii și efectul asupra elevilor."}, {"c": "Formare", "q": "Care sunt efectele dezvoltării profesionale pe niveluri (Wade)?", "a": "Învățarea profesorilor 0,90; comportament 0,60; reacții 0,42; rezultatele elevilor 0,37."}, {"c": "Formare", "q": "Care sunt componentele-cheie ale dezvoltării profesionale eficiente (Timperley, d = 0,66)?", "a": "Timp îndelungat, expertiză externă, contestarea discursurilor dominante, comunitate profesională de practică, implicarea conducerii, legătură obiective–activități, mai multe moduri de învățare, perspectiva elevilor."}, {"c": "Formare", "q": "Când sunt eficiente comunitățile profesionale de învățare (CPF)?", "a": "Când se contestă credințele problematice, se testează idei concurente, se creează așteptări ridicate pentru toți și discuțiile pornesc de la artefacte din învățarea elevilor."}, {"c": "Formare", "q": "Ce efect are coachingul (d = 0,26) și când e cel mai eficient?", "a": "Variază mult; d = 0,49 pe practica didactică, 0,18 pe elevi; cel mai bun pe practici pedagogice (0,91); programele mici sunt mai eficiente; virtual = față în față."}, {"c": "Formare", "q": "Care sunt cele 3 etape ale coachingului (Knight)?", "a": "Identificare, învățare, îmbunătățire."}, {"c": "Formare", "q": "Cum arată un coach bun?", "a": "Diagnostichează realitatea, lucrează în parteneriat, ascultă, e precis, ancorează instruirea în clasă (video, artefacte), folosește liste de control, nu devine evaluator."}, {"c": "Formare", "q": "Ce este micropredarea/analiza video (d = 1,01)?", "a": "Filmarea unei (mini)lecții și analiza ei în grup; efecte mai mari când profesorii se analizează împreună cu alți evaluatori, nu doar singuri."}, {"c": "Formare", "q": "Ce combinație funcționează cel mai bine în formarea practică (Bennett, Metcalf)?", "a": "Teorie + demonstrație + practică + feedback și coaching, eșalonate în timp, nu comprimate în puține sesiuni."}, {"c": "Formare", "q": "Ce arată metaanalizele despre cunoașterea materiei de către profesori (d = 0,13)?", "a": "Corelații mici cu rezultatele elevilor (r = 0,03–0,16); „o enigmă”. Predarea în afara specializării nu pare să aibă efect negativ clar."}, {"c": "Formare", "q": "Care e modelul lui Ball (2008) despre cunoașterea profesorului?", "a": "Cunoașterea materiei (comună, specializată, în perspectiva conținutului) + cunoașterea conținutului pedagogic (conținut și elevi, conținut și predare, conținut și programă)."}, {"c": "Formare", "q": "Cum explică Hattie efectul mic al cunoașterii materiei?", "a": "Clasele sunt dominate de învățarea de suprafață; când e echilibru între suprafață și profunzime, cunoașterea materiei contează mai mult (Picker, 2022)."}, {"c": "Gândire evaluativă", "q": "Ce este gândirea evaluativă (Rickards et al.)?", "a": "Gândire critică, argumentare și înțelegerea altora, axată pe maximizarea impactului asupra vieții școlare a elevilor."}, {"c": "Gândire evaluativă", "q": "Care sunt cele 5 caracteristici ale gândirii evaluative?", "a": "1) argumentare și gândire critică pentru evaluarea dovezilor; 2) verificarea implementării și a consecințelor; 3) accent pe deciziile majore, impact asupra elevilor; 4) investigarea predispozițiilor și factorilor contradictori; 5) înțelegerea punctelor de vedere ale altora."}, {"c": "Gândire evaluativă", "q": "Cum se definește un profesor excelent?", "a": "Prin impactul asupra <b>tuturor</b> elevilor, predând atât cunoaștere teoretică, cât și procedurală, asigurându-se că toți obțin cel puțin un an de progres într-un an; nu prin metode, personalitate, formare inițială sau cunoașterea materiei."}, {"c": "Concluzii", "q": "Ce profesori au cel mai mare impact?", "a": "Cu așteptări ridicate pentru toți, fără etichetare, care oferă mai multe căi spre succes, sunt credibili și clari, își cunosc progresul și colaborează pentru a-și evalua impactul (micropredare, analiză colectivă)."}, {"c": "Concluzii", "q": "Care este principala piedică în îmbunătățirea continuă a elevilor?", "a": "Lipsa unei viziuni comune a profesorilor asupra progresului și standardelor: la mutarea la alt profesor nu există garanție de sarcini mai stimulante."}, {"c": "Concluzii", "q": "Ce recomandă Hattie instituțiilor de formare?", "a": "Să arate dovezi că absolvenții sunt pregătiți să predea, în loc să ceară mai mulți ani și mai multe resurse; focus pe strategii de învățare/predare, sistem de evaluare cu video, repertoriu variat de metode."}, {"c": "Concluzii", "q": "Ce mesaj dă anecdota lui Russel Bishop?", "a": "Întrebați elevii: „Vă simpatizează profesorul?” – elevii din minorități spun adesea nu; când profesorii văd rezultatele, își schimbă metodele. Relațiile pozitive sunt esențiale."}];ALL.forEach((c,i)=>c.id=i);
+const $=s=>document.querySelector(s);
+let known=new Set(),theme='auto',seenHelp=false;
+try{known=new Set(JSON.parse(localStorage.getItem('h9k')||'[]'));theme=localStorage.getItem('h9t')||'auto';seenHelp=localStorage.getItem('h9h')==='1'}catch(e){}
+const store=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+document.documentElement.dataset.theme=theme;
+const CATS=[...new Set(ALL.map(c=>c.c))];
+let cat='*',mode='all',deck=[],i=0,flipped=false,order=null;
+
+function chips(){const h=[['*','Toate',ALL.length,ALL.filter(c=>known.has(c.id)).length]].concat(CATS.map(n=>{const l=ALL.filter(c=>c.c===n);return[n,n,l.length,l.filter(c=>known.has(c.id)).length]}));
+ $('#chips').innerHTML=h.map(([k,l,t,kn])=>`<button class="chip ${k===cat?'on':''}" data-c="${k}">${l}<em>${kn}/${t}</em></button>`).join('')}
+function progress(){const t=ALL.length,k=known.size;$('#pk').textContent=k;$('#pt').textContent=t;$('#pp').textContent=Math.round(k/t*100)+'%';$('#pbar').style.width=(k/t*100)+'%'}
+function build(keepId){
+ let d=ALL.filter(c=>(cat==='*'||c.c===cat)&&(mode==='all'||!known.has(c.id)));
+ if(order)d.sort((a,b)=>order[a.id]-order[b.id]);deck=d;
+ i=keepId!=null&&d.findIndex(c=>c.id===keepId)>=0?d.findIndex(c=>c.id===keepId):Math.min(i,Math.max(d.length-1,0));
+ chips();progress();render(true)}
+function render(anim){
+ flipped=false;const m=$('#main');
+ if(!deck.length){
+  const allDone=known.size===ALL.length;
+  m.innerHTML=`<div class="done"><h2>${mode==='todo'?'Nimic de repetat aici 🎉':'Nicio carte aici'}</h2><p>${allDone?'Ai marcat toate cardurile ca știute. Felicitări!':'Ai terminat această selecție.'}</p><button class="btn" id="d1">Vezi toate cardurile</button><button class="btn alt" id="d2">Reîncepe de la zero</button></div>`;
+  $('#d1').onclick=()=>{mode='all';cat='*';syncMode();build()};$('#d2').onclick=resetAll;return}
+ const c=deck[i],kn=known.has(c.id);
+ m.innerHTML=`<div class="stage"><div class="card ${anim?'enter':''}" id="card" tabindex="0" aria-label="Card. Apasă Spațiu pentru a întoarce.">
+  <div class="face"><div class="top"><span>${c.c}</span>${kn?'<span class="badge k">✓ știut</span>':''}</div><div class="body"><div class="q">${c.q}</div></div><div class="hint">Atinge cardul pentru răspuns <span class="kb">· <kbd>Spațiu</kbd></span></div></div>
+  <div class="face back"><div class="top"><span>Răspuns · ${c.c}</span>${kn?'<span class="badge k">✓ știut</span>':''}</div><div class="body"><div class="a">${c.a}</div></div><div class="hint">Cât de bine ai știut?</div></div></div></div>
+ <div class="grade dis" id="grade"><button class="big no" id="no">De repetat<small>← săgeata stânga</small></button><button class="big ok" id="ok">Știu<small>săgeata dreapta →</small></button></div>
+ <div class="row"><button class="nav" id="prev" aria-label="Înapoi">‹</button><span class="cnt">${i+1} / ${deck.length}</span><button class="nav" id="next" aria-label="Înainte">›</button></div>
+ <div class="tip">Întoarce cardul pentru a putea nota răspunsul.</div>`;
+ const card=$('#card');card.onclick=flip;
+ $('#prev').onclick=()=>go(-1);$('#next').onclick=()=>go(1);$('#ok').onclick=()=>grade(true);$('#no').onclick=()=>grade(false);
+ swipe(card)}
+function flip(){const c=$('#card');if(!c)return;flipped=!flipped;c.classList.toggle('flip',flipped);$('#grade').classList.toggle('dis',!flipped);$('.tip').style.visibility=flipped?'hidden':'visible'}
+function go(d){if(!deck.length)return;i=(i+d+deck.length)%deck.length;render(true)}
+function grade(k){if(!deck.length||!flipped)return;const c=deck[i];k?known.add(c.id):known.delete(c.id);store('h9k',JSON.stringify([...known]));
+ const el=$('#card');el.classList.add(k?'swipe-r':'swipe-l');
+ setTimeout(()=>{chips();progress();
+  if(mode==='todo'&&k){deck.splice(i,1);if(i>=deck.length)i=0;render(true)}else{if(deck.length===1&&!(mode==='todo'))render(true);else go(1)}},230)}
+function swipe(el){let x0=null,dx=0;
+ el.addEventListener('pointerdown',e=>{x0=e.clientX;dx=0});
+ el.addEventListener('pointermove',e=>{if(x0===null)return;dx=e.clientX-x0});
+ el.addEventListener('pointerup',()=>{if(x0===null)return;const d=dx;x0=null;if(Math.abs(d)>90){if(!flipped){go(d<0?1:-1)}else grade(d>0)}});
+ el.addEventListener('click',e=>{if(Math.abs(dx)>10){e.stopImmediatePropagation();dx=0}},true)}
+function syncMode(){document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode))}
+function resetAll(){if(known.size&&!confirm('Ștergi tot progresul?'))return;known=new Set();store('h9k','[]');mode='all';cat='*';order=null;i=0;syncMode();build()}
+
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;i=0;build()};
+$('#mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;i=0;syncMode();build()};
+$('#shuf').onclick=()=>{order={};ALL.forEach(c=>order[c.id]=Math.random());i=0;build()};
+$('#reset').onclick=resetAll;
+$('#help').onclick=()=>$('#dlg').showModal();
+$('#theme').onclick=()=>{const dark=matchMedia('(prefers-color-scheme: dark)').matches;const cur=theme==='auto'?(dark?'dark':'light'):theme;theme=cur==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;store('h9t',theme)};
+document.addEventListener('keydown',e=>{if($('#dlg').open)return;
+ if(e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();flip()}
+ else if(e.key==='ArrowRight'){flipped?grade(true):go(1)}
+ else if(e.key==='ArrowLeft'){flipped?grade(false):go(-1)}});
+build();
+if(!seenHelp){store('h9h','1');setTimeout(()=>{try{$('#dlg').showModal()}catch(e){}},300)}
+</script></body></html>
